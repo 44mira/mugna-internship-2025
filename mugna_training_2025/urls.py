@@ -19,7 +19,7 @@ from django.contrib import admin
 from django.urls import path
 
 from mugna_training_2025.views import index, current_datetime, offset_time
-from mugna_training_2025.views import add_2, add_3, add_n, validdate
+from mugna_training_2025.views import add_n, validdate
 
 urlpatterns = [
     path("admin/", admin.site.urls),

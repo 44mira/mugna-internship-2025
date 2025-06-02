@@ -56,26 +56,6 @@ def format_result(add, sub, prod, quo):
     )
 
 
-def add_2(request, number1, number2):
-    try:
-        number1, number2 = int(number1), int(number2)
-    except ValueError:
-        return Http404
-
-    result = apply_math(number1, number2)
-    return format_result(*result)
-
-
-def add_3(request, number1, number2, number3):
-    try:
-        number1, number2, number3 = int(number1), int(number2), int(number3)
-    except ValueError:
-        return Http404
-
-    result = apply_math(number1, number2, number3)
-    return format_result(*result)
-
-
 def add_n(request, nums):
     try:
         path = nums.strip("/").split("/")
