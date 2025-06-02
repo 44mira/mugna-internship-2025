@@ -41,7 +41,14 @@ def apply_math(*nums):
     return add, sub, prod, quo
 
 
-def format_result(add, sub, prod, quo):
+def add_n(request, nums):
+    try:
+        path = nums.strip("/").split("/")
+        nums = map(int, path)
+    except ValueError:
+        return Http404
+
+    add, sub, prod, quo = apply_math(*nums)
     return HttpResponse(
         f"""
         <html>
@@ -54,17 +61,6 @@ def format_result(add, sub, prod, quo):
         </html>
         """.encode()
     )
-
-
-def add_n(request, nums):
-    try:
-        path = nums.strip("/").split("/")
-        nums = map(int, path)
-    except ValueError:
-        return Http404
-
-    result = apply_math(*nums)
-    return format_result(*result)
 
 
 def validdate(request, year, month, day):
