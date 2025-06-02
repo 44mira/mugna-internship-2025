@@ -7,3 +7,6 @@
     - ~runserver~
       - Possible to pass a ~PORT~
       - or a ~IP:PORT~
+
+  - Django determines the /root/ URLconf by looking at the ~ROOT_URLCONF~
+    setting.
