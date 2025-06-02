@@ -1,0 +1,9 @@
+#+TITLE:     Django notes
+#+AUTHOR:    Author
+#+DATE:      2025-06-02
+
+* First Django Project
+  - ~python manage.py~
+    - ~runserver~
+      - Possible to pass a ~PORT~
+      - or a ~IP:PORT~
