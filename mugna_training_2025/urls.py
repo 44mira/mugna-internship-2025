@@ -19,14 +19,13 @@ from django.contrib import admin
 from django.urls import path
 
 from mugna_training_2025.views import index, current_datetime, offset_time
-from mugna_training_2025.views import add_2, add_3, validdate
+from mugna_training_2025.views import add_2, add_3, add_n, validdate
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("hello/", index, name="index"),
     path("time/", current_datetime),
     path("offset/<int:offset>", offset_time),
-    path("math/<int:number1>/<int:number2>/", add_2),
-    path("math/<int:number1>/<int:number2>/<int:number3>", add_3),
+    path("math/<path:nums>", add_n),
     path("valid-date/<int:year>/<int:month>/<int:day>", validdate),
 ]

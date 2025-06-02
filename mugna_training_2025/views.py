@@ -76,6 +76,17 @@ def add_3(request, number1, number2, number3):
     return format_result(*result)
 
 
+def add_n(request, nums):
+    try:
+        path = nums.strip("/").split("/")
+        nums = map(int, path)
+    except ValueError:
+        return Http404
+
+    result = apply_math(*nums)
+    return format_result(*result)
+
+
 def validdate(request, year, month, day):
     try:
         datetime.datetime(year, month, day)
