@@ -13,7 +13,9 @@
     <li>No authors found.</li>
   {% endfor %}
   <li> Publisher: {{ publisher }} </li>
-  <li> Classification: {{ classification }} </li>
+  <li> Classification: 
+    <a href={% url "classification" classification.pk %}>{{ classification }}</a>
+  </li>
 </ul>
 
 {% endblock %}

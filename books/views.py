@@ -1,9 +1,8 @@
 from django.shortcuts import render
 from books.models import Book, Author, Classification
 
+
 # Create your views here.
-
-
 def books(request):
     return render(request, "books.html", {"books": Book.objects.all()})
 
@@ -30,5 +29,18 @@ def author(request, pk):
         {
             "author": str(author),
             "books": author.books.all(),
+        },
+    )
+
+
+def classification(request, pk):
+    classification = Classification.objects.get(pk=pk)
+
+    return render(
+        request,
+        "classification.html",
+        {
+            "classification": classification,
+            "books": classification.books.all(),
         },
     )
