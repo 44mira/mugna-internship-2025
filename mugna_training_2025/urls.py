@@ -16,16 +16,11 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 
-from mugna_training_2025.views import index, current_datetime, offset_time
-from mugna_training_2025.views import add_n, validdate
+# from mugna_training_2025.views import index
 
 urlpatterns = [
-    # path("admin/", admin.site.urls),
-    path("", index),
-    path("time/", current_datetime),
-    path("offset/<int:offset>", offset_time),
-    path("math/<path:nums>", add_n),
-    path("valid-date/<int:year>/<int:month>/<int:day>", validdate),
+    path("admin/", admin.site.urls),
+    path("", include("books.urls")),
 ]

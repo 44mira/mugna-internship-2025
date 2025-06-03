@@ -29,7 +29,7 @@
 
   1. Create a ~Template~ object
   2. Call ~<template>.render(<context>)~
-    - Returns the template as a string
+     - Returns the template as a string
 
 ** Syntax
    #+BEGIN_SRC py
@@ -82,3 +82,46 @@
 
 * CSRF Token
   - Cross site request forgery
+
+* Project vs App
+** Project
+   - Instance of a certain set of Django apps, plus configuration for those apps
+   - Contains settings file
+** App
+   - Portable set of django functionality
+   - For modularization
+
+* Models and Django ORM
+  - SQLite
+  - /Dumb/ queries are done usually for performance
+  - Import a model and then access the ~QuerySet~ containing all using
+    ~.objects~ method.
+
+  - Models should be named in singular form
+
+** Fields
+   - ~models.CharField~
+   - ~models.TextField~
+   - ~models.IntegerField~
+   - ~models.DecimalField~
+   - ~models.FileField~
+   - ~models.DateTimeField~
+   - ~models.EmailField~
+   - ~models.OneToOneField~
+   - ~models.ForeignKey~
+     - ~related_name~ kwarg is used for accessing
+     - One-to-many
+   - ~models.ManyToManyField~
+     - ~related_name~ kwarg is used for accessing
+
+** Kwargs
+   - ~verbose_name~
+     - For admin label
+   - ~help_text~
+     - For admin help text
+   - ~max_length~
+
+** Migrations
+   - Schema /evolution/ or /mutation/
+   - Changing your database version from one version into another
+   - We can rollback migrations by using ~python manage.py migrate <app> <id>~
