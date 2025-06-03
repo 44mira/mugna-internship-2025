@@ -10,3 +10,75 @@
 
   - Django determines the /root/ URLconf by looking at the ~ROOT_URLCONF~
     setting.
+
+** ~views.py~
+   - Write handlers
+** ~urls.py~
+   - Write routers
+
+* Templates
+  - Express presentation, not program logic
+  - Separate the presentation of a document from its data
+  - Double braces for value injection from context ~{{ <variable> }}~
+    - Surrounded with percent signs and single brace for code injection ~{% <code> %}~
+  - You can set the templates directory in the ~TEMPLATE~ variable in ~settings.py~.
+  - Loaded with ~django.template.loader import get_template~
+    - or ~django.shortcuts import render~
+      - takes in a ~request~, ~template~, and ~context~
+    - ~TemplateDoesNotExist~ exception
+
+  1. Create a ~Template~ object
+  2. Call ~<template>.render(<context>)~
+    - Returns the template as a string
+
+** Syntax
+   #+BEGIN_SRC py
+   t = Template("Hello {{ name }}") # create wrapped template string
+   c = Context({"name": "world"})   # define context/environment
+
+   print(t.render(c))
+   #+END_SRC
+
+** Injection
+   #+BEGIN_SRC html
+   {% if %} {% elif %} {% else %} {% endif %}
+   {% for <x> in <xs> %} {% empty %} {% endfor %}
+   {% comment <note> %}
+   {% cycle <a> <b> <c> %}
+   {% include <name> %}
+   #+END_SRC
+
+** Filters
+   - Transformations applied using pipe ~|~.
+     - ~title~
+       - Titlecase
+     - ~first~
+     - ~upper~
+     - ~truncatewords:"30"~
+     - ~date:"<format>"~
+
+** Custom tags and filters
+   - Using the ~{% load filters tags %}~ tag.
+   - It needs to be in a Django application.
+     - ~templatetags/~ directory
+   - Pipes are forwarded as the first argument of a function
+     - The filter argument will be the rest
+
+   - Define custom tags with decorator
+     ~@register.simple_tag(takes_context=True)~
+   - Define custom tags with filter
+     ~@register.filter(name="filter_name")~
+
+** Template Inheritance
+   - Layouts
+   - ~{% extends %}~ must be the first tag in the template
+
+*** Syntax
+    #+BEGIN_SRC html
+    {% extends <name> %}
+    {% block <name> %} {% endblock %}
+    {% block.super %}
+    #+END_SRC
+
+* CSRF Token
+  - Cross site request forgery
