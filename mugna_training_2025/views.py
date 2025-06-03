@@ -1,11 +1,12 @@
 from functools import reduce
 from itertools import product
 from django.http import HttpResponse, Http404
+from django.shortcuts import render
 import datetime
 
 
 def index(request):
-    return HttpResponse(b"Hello world!")
+    return render(request, "index.html")
 
 
 def current_datetime(request):
@@ -23,9 +24,8 @@ def offset_time(request, offset):
 
     now = datetime.datetime.now()
     result = now + datetime.timedelta(hours=offset)
-    html = f"<html><body>Offset time is {result}.</body></html>"
 
-    return HttpResponse(html.encode("utf-8"))
+    return render(request, "offset.html", {"output": result})
 
 
 def apply_math(*nums):
@@ -49,24 +49,16 @@ def add_n(request, nums):
         return Http404
 
     add, sub, prod, quo = apply_math(*nums)
-    return HttpResponse(
-        f"""
-        <html>
-            <body>
-                Sum: {add}
-                Difference: {sub}
-                Product: {prod}
-                Quotient: {quo}
-            </body>
-        </html>
-        """.encode()
+    return render(
+        request, "math.html", {"add": add, "sub": sub, "prod": prod, "quo": quo}
     )
 
 
 def validdate(request, year, month, day):
+    context = {"output": "Valid format"}
     try:
         datetime.datetime(year, month, day)
     except:
-        return HttpResponse("Invalid format.".encode())
+        context["output"] = "Invalid format"
 
-    return HttpResponse("Valid format.".encode())
+    return render(request, "valid_date.html", context)

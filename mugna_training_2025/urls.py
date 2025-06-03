@@ -22,8 +22,8 @@ from mugna_training_2025.views import index, current_datetime, offset_time
 from mugna_training_2025.views import add_n, validdate
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("hello/", index, name="index"),
+    # path("admin/", admin.site.urls),
+    path("", index),
     path("time/", current_datetime),
     path("offset/<int:offset>", offset_time),
     path("math/<path:nums>", add_n),
