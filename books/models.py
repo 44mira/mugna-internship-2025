@@ -16,7 +16,10 @@ class Publisher(models.Model):
 class Author(models.Model):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=40)
-    email = models.EmailField()
+
+    # leading space for verbose name to prevent capitalization
+    # (specified in exercise)
+    email = models.EmailField(verbose_name=" e-mail")
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
