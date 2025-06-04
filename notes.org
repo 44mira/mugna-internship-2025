@@ -125,3 +125,86 @@
    - Schema /evolution/ or /mutation/
    - Changing your database version from one version into another
    - We can rollback migrations by using ~python manage.py migrate <app> <id>~
+
+* Forms & Function-based Views
+
+** The ~request~ object
+   - ~HttpRequest~
+
+*** Information about URL
+    - ~request.path~
+      - Full path with leading slash not including the domain
+    - ~request.get_host~
+      - Host/domain
+    - ~request.get_full_path~
+      - ~.path~ including the query string (if available)
+    - ~request.is_secure~
+      - If made via HTTPS.
+    - ~request.META~
+      - Dictionary containing all available HTTP headers of the request
+      - Includes IP address and user agent
+    - ~request.GET~
+    - ~request.POST~
+
+** ~django.forms~
+*** The Form
+    #+BEGIN_SRC py
+    from django import forms
+
+    class ContactForm(forms.Form):
+        subject = forms.CharField(max_length=100)
+        message = forms.CharField(widget=forms.Textarea)
+        sender = forms.EmailField()
+        cc_myself = forms.BooleanField(required=False)
+
+        def clean_sender(self):
+            sender = self.cleaned_data.get("sender")
+            if sender is None or sender.split("@")[1] != "mugna.tech":
+                raise forms.ValidationError(
+                    "Sender sshould only be from a Mugna Organization."
+                )
+
+            return sender
+    #+END_SRC
+*** The View
+    #+BEGIN_SRC py
+    from django.http import HttpResponseRedirect
+
+    from django.shortcuts import render
+    from .forms import ContactForm
+
+    def contact(request):
+        if request.method == "POST":
+            form = ContactForm(request.POST)
+            if form.is_valid():
+                return HttpResponseRedirect("/thanks/")
+        else:
+            form = ContactForm()
+        return render(request, "contact.html", {"form": form})
+    #+END_SRC
+
+    - ~.is_bound~ attribute tells whether or not data is bound to it or not
+    - ~.is_valid~ attribute tells whether or not data is valid or not
+*** The Template
+    #+BEGIN_SRC html
+    <!DOCTYPE html>
+    <html lang="">
+      <head>
+        <meta charset="UTF-8">
+        <title>Contact Us</title>
+      </head>
+      <body>
+        <form method="POST">
+          {% csrf_token %}
+          {{ form }}
+        </form>
+      </body>
+    </html>
+    #+END_SRC
+**** Form rendering options
+     - ~{{ form.as_table }}~
+       - render with ~<tr>~ tags.
+     - ~{{ form.as_p }}~
+       - render with ~<p>~ tags.
+     - ~{{ form.as_ul }}~
+       - render with ~<li>~ tags.
