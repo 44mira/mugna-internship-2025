@@ -13,6 +13,8 @@ from books.views import (
     put_publisher,
     classification,
     register_user,
+    login_user,
+    logout_user,
 )
 
 urlpatterns = [
@@ -29,4 +31,6 @@ urlpatterns = [
     path("put/book/<int:pk>/", put_book, name="put-book"),
     path("put/publisher/<int:pk>/", put_publisher, name="put-publisher"),
     path("register/", register_user, name="register-user"),
+    path("login/", login_user, name="login-user"),
+    path("logout/", logout_user, name="logout-user"),
 ]

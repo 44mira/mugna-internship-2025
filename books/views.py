@@ -1,5 +1,6 @@
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from django.db.models import Value
 from django.db.models.functions import Concat
 from django.http import HttpResponseRedirect
@@ -12,6 +13,7 @@ from books.forms import (
     PublisherPost,
     PublisherSearchForm,
     RegisterUser,
+    LoginUser,
 )
 
 
@@ -186,3 +188,31 @@ def register_user(request):
 
     context = {"form": form}
     return render(request, "register_user.html", context)
+
+
+def login_user(request):
+    if request.user.is_authenticated:
+        return HttpResponseRedirect("/index/")
+
+    form = LoginUser()
+
+    if request.method == "POST":
+        form = LoginUser(request.POST)
+        if form.is_valid():
+            user = form.user
+
+            # valid login is already checked within LoginUser
+            login(request, user)
+            return HttpResponseRedirect("/index/")
+
+    context = {"form": form}
+    return render(request, "login_user.html", context)
+
+
+@login_required(login_url="/login/")
+def logout_user(request):
+    if request.method == "POST":
+        logout(request)
+        return HttpResponseRedirect("/login/")
+
+    return render(request, "logout_user.html")

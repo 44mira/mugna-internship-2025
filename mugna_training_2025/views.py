@@ -1,12 +1,12 @@
 from functools import reduce
-from itertools import product
 from django.http import HttpResponse, Http404
 from django.shortcuts import render
 import datetime
 
 
 def index(request):
-    return render(request, "index.html")
+    context = {"request": request}
+    return render(request, "index.html", context)
 
 
 def current_datetime(request):
