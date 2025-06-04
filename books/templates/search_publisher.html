@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %} <h1>Search by publisher</h1> {% endblock %}
+
+{% block content %}
+
+<form action="" method="get">
+  {% csrf_token %}
+  {{ form.as_table }}
+  <input type="submit" value="Submit" />
+
+</form>
+
+<hr>
+<ul>
+{% for publisher in publishers %}
+  <li>
+    {{ publisher }}
+  </li>
+{% endfor %}
+</ul>
+
+{% endblock %}

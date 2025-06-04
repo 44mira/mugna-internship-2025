@@ -159,9 +159,9 @@
 
         def clean_sender(self):
             sender = self.cleaned_data.get("sender")
-            if sender is None or sender.split("@")[1] != "mugna.tech":
+            if sender.split("@")[1] != "mugna.tech":
                 raise forms.ValidationError(
-                    "Sender sshould only be from a Mugna Organization."
+                    "Sender should only be from a Mugna Organization."
                 )
 
             return sender
