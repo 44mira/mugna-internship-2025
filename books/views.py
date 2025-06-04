@@ -1,10 +1,18 @@
+from django.contrib.auth import login
+from django.contrib.auth.models import User
 from django.db.models import Value
 from django.db.models.functions import Concat
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from books.models import Book, Author, Classification, Publisher
 
-from books.forms import AuthorForm, BookPost, PublisherPost, PublisherSearchForm
+from books.forms import (
+    AuthorForm,
+    BookPost,
+    PublisherPost,
+    PublisherSearchForm,
+    RegisterUser,
+)
 
 
 # Create your views here.
@@ -160,7 +168,21 @@ def put_publisher(request, pk):
         form = PublisherPost(request.POST, instance=publisher)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect(f"/search-publisher/")
+            return HttpResponseRedirect("/search-publisher/")
 
     context = {"entity": "publisher", "obj": publisher, "form": form}
     return render(request, "put_entity.html", context)
+
+
+def register_user(request):
+    form = RegisterUser()
+
+    if request.method == "POST":
+        form = RegisterUser(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return HttpResponseRedirect("/index/")
+
+    context = {"form": form}
+    return render(request, "register_user.html", context)
