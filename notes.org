@@ -208,3 +208,31 @@
        - render with ~<p>~ tags.
      - ~{{ form.as_ul }}~
        - render with ~<li>~ tags.
+
+* Django Test and Test-driven Development
+  - Simulation of requests
+  - Insertion of test data
+  - Inspection of the application's output
+  - Application level testing can be found in ~tests.py~
+    - Or within a directory ~tests/~
+      - Any filename that begins with ~test_~
+
+  #+BEGIN_SRC py
+  from django.test import TestCase
+
+  class BookMethodTests(TestCase):
+    pass
+  #+END_SRC
+
+  #+BEGIN_SRC bash
+  ./manage.py test
+  ./manage.py test books
+  ./manage.py test books.tests
+  ./manage.py test books.tests.BookMethodTests
+  ./manage.py test books.tests.BookMethodTests.<testname>
+  #+END_SRC
+
+** The Test Client
+   - Simulate ~GET~ and ~POST~ requests.
+
+* Class-Based Views

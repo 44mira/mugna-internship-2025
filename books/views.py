@@ -1,6 +1,6 @@
 from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Value
 from django.db.models.functions import Concat
 from django.http import HttpResponseRedirect
@@ -18,10 +18,12 @@ from books.forms import (
 
 
 # Create your views here.
+@login_required(login_url="/login/")
 def books(request):
     return render(request, "books.html", {"books": Book.objects.all()})
 
 
+@login_required(login_url="/login/")
 def book(request, pk):
     book = Book.objects.get(pk=pk)
     return render(
@@ -36,6 +38,7 @@ def book(request, pk):
     )
 
 
+@login_required(login_url="/login/")
 def author(request, pk):
     author = Author.objects.get(pk=pk)
     return render(
@@ -48,6 +51,7 @@ def author(request, pk):
     )
 
 
+@login_required(login_url="/login/")
 def classification(request, pk):
     classification = Classification.objects.get(pk=pk)
 
@@ -61,6 +65,7 @@ def classification(request, pk):
     )
 
 
+@login_required(login_url="/login/")
 def search_author(request):
     if "author_name" in request.GET:
         form = AuthorForm(request.GET)
@@ -83,6 +88,7 @@ def search_author(request):
     return render(request, "search_author.html", {"form": form})
 
 
+@login_required(login_url="/login/")
 def search_publisher(request):
     if "publisher_name" in request.GET:
         form = PublisherSearchForm(request.GET)
@@ -102,6 +108,7 @@ def search_publisher(request):
     return render(request, "search_publisher.html", {"form": form})
 
 
+@user_passes_test(lambda u: u.is_superuser, login_url="/login/")
 def post_book(request):
     form = BookPost()
 
@@ -114,6 +121,7 @@ def post_book(request):
     return render(request, "post_entity.html", {"entity": "book", "form": form})
 
 
+@user_passes_test(lambda u: u.is_superuser, login_url="/login/")
 def post_publisher(request):
     form = PublisherPost()
 
@@ -126,6 +134,7 @@ def post_publisher(request):
     return render(request, "post_entity.html", {"entity": "publisher", "form": form})
 
 
+@user_passes_test(lambda u: u.is_superuser, login_url="/login/")
 def delete_book(request, pk):
     book = get_object_or_404(Book, pk=pk)
 
@@ -137,6 +146,7 @@ def delete_book(request, pk):
     return render(request, "delete_entity.html", context)
 
 
+@user_passes_test(lambda u: u.is_superuser, login_url="/login/")
 def delete_publisher(request, pk):
     publisher = get_object_or_404(Publisher, pk=pk)
 
@@ -148,6 +158,7 @@ def delete_publisher(request, pk):
     return render(request, "delete_entity.html", context)
 
 
+@user_passes_test(lambda u: u.is_superuser, login_url="/login/")
 def put_book(request, pk):
     book = get_object_or_404(Book, pk=pk)
     form = BookPost(instance=book)
@@ -162,6 +173,7 @@ def put_book(request, pk):
     return render(request, "put_entity.html", context)
 
 
+@user_passes_test(lambda u: u.is_superuser, login_url="/login/")
 def put_publisher(request, pk):
     publisher = get_object_or_404(Publisher, pk=pk)
     form = PublisherPost(instance=publisher)
