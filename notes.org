@@ -240,3 +240,26 @@
    - By default CSRF checks are disabled
 
 * Class-Based Views
+  - Can use mixins to mak reusable components
+  - ~.as_view()~
+
+  #+BEGIN_SRC py
+  from django.views.generic import TemplateView, View
+  #+END_SRC
+
+** Generic Views
+   - ~ListView~
+   - ~DetailView~
+   - ~CreateView~
+   - ~UpdateView~
+   - ~DeleteView~
+
+* Sessions
+  - Sessions are implemented via /middleware/
+  - ~request.session~ dictionary
+    - or ~from django.contrib.sessions.backends.db import SessionStore~
+  - By default, Django stores sessions in your database
+    - can be configured to store in filesystem or cache
+    - ~settings.SESSION_ENGINE~
+  - ~uv add python-memcached~
+
