@@ -15,7 +15,7 @@ class Publisher(models.Model):
 
 class Author(models.Model):
     first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=40)
+    last_name = models.CharField(max_length=40, blank=True)
 
     # leading space for verbose name to prevent capitalization
     # (specified in exercise)
