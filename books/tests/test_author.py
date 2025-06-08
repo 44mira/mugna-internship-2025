@@ -19,6 +19,19 @@ class AuthorTests(TestCase):
             username=self.username, password=self.password, email="test@test.com"
         )
 
+    def test_detail_author(self):
+        self.client.login(
+            username=self.username, password=self.password, email="test@test.com"
+        )
+
+        response = self.client.get(reverse("author", kwargs={"pk": 1}))
+        expected = Author.objects.get(pk=1)
+
+        self.assertEqual(response.context["author"], expected)
+        self.assertListEqual(
+            list(response.context["books"]), list(expected.books.all())
+        )
+
     def test_post_author(self):
         self.client.login(
             username=self.username, password=self.password, email="test@test.com"

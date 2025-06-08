@@ -44,7 +44,7 @@ def author(request, pk):
         request,
         "author.html",
         {
-            "author": str(author),
+            "author": author,
             "books": author.books.all(),
         },
     )
