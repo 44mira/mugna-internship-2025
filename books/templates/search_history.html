@@ -7,7 +7,7 @@
 <ol>
 {% for item in search_history reversed %}
   <li>
-    <a href="/search-{{ item.type }}/?name={{ item.value }}">
+    <a href="/search-{{ item.type }}/?name={{ item.value|urlencode }}">
       {{ item.type }}: {{ item.value }}
     </a>
   </li>
