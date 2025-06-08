@@ -42,9 +42,7 @@ class SearchTests(TestCase):
 
     def test_search_author(self):
         self.client.login(username=self.username, password=self.password)
-        response = self.client.get(
-            reverse("search-author", query=[("author_name", "John")])
-        )
+        response = self.client.get(reverse("search-author", query=[("name", "John")]))
 
         self.assertListEqual(
             list(response.context["authors"]),
@@ -54,7 +52,7 @@ class SearchTests(TestCase):
     def test_search_publisher(self):
         self.client.login(username=self.username, password=self.password)
         response = self.client.get(
-            reverse("search-publisher", query=[("publisher_name", "Alpha Books")])
+            reverse("search-publisher", query=[("name", "Alpha Books")])
         )
 
         self.assertListEqual(

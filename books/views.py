@@ -70,10 +70,22 @@ class AuthorSearch(LoginRequiredMixin, View):
     template_name = "search_author.html"
 
     def get(self, request, *args, **kwargs):
-        if "author_name" in request.GET:
+        # this should probably go in a middleware, but it has not been
+        # discussed by this exercise
+        if not request.session.has_key("search_history"):
+            request.session["search_history"] = []
+
+        if "name" in request.GET:
             form = self.form_class(request.GET)
             if form.is_valid():
-                author_name = form.cleaned_data["author_name"]
+                author_name = form.cleaned_data["name"]
+                request.session["search_history"].append(
+                    {"type": "author", "value": author_name}
+                )
+
+                # we explicitly tell Django that the session has been modified
+                # as it cannot see internal state changing
+                request.session.modified = True
 
                 # concatenate first_name and last_name to filter both names at the
                 # same time
@@ -99,10 +111,23 @@ class PublisherSearch(LoginRequiredMixin, View):
     template_name = "search_publisher.html"
 
     def get(self, request, *args, **kwargs):
-        if "publisher_name" in request.GET:
+        # this should probably go in a middleware, but it has not been
+        # discussed by this exercise
+        if not request.session.has_key("search_history"):
+            request.session["search_history"] = []
+
+        if "name" in request.GET:
             form = self.form_class(request.GET)
             if form.is_valid():
-                publisher_name = form.cleaned_data["publisher_name"]
+                publisher_name = form.cleaned_data["name"]
+
+                request.session["search_history"].append(
+                    {"type": "publisher", "value": publisher_name}
+                )
+                # we explicitly tell Django that the session has been modified
+                # as it cannot see internal state changing
+                request.session.modified = True
+
                 return render(
                     request,
                     self.template_name,
@@ -286,3 +311,10 @@ def logout_user(request):
         return HttpResponseRedirect("/login/")
 
     return render(request, "logout_user.html")
+
+
+@login_required(login_url="/login/")
+def search_history(request):
+    context = {"search_history": request.session.get("search_history", [])}
+
+    return render(request, "search_history.html", context)

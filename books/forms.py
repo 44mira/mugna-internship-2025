@@ -5,11 +5,11 @@ from django.utils.translation import gettext_lazy as _
 
 
 class AuthorSearchForm(forms.Form):
-    author_name = forms.CharField(required=False)
+    name = forms.CharField(required=False)
 
 
 class PublisherSearchForm(forms.Form):
-    publisher_name = forms.CharField(required=False)
+    name = forms.CharField(required=False)
 
 
 class RegisterUser(forms.ModelForm):

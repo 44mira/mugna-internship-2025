@@ -18,6 +18,7 @@ from books.views import (
     register_user,
     login_user,
     logout_user,
+    search_history,
 )
 
 urlpatterns = [
@@ -39,4 +40,5 @@ urlpatterns = [
     path("register/", register_user, name="register-user"),
     path("login/", login_user, name="login-user"),
     path("logout/", logout_user, name="logout-user"),
+    path("search-history/", search_history, name="search-history"),
 ]

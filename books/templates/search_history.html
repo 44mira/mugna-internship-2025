@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %} <h1>Search History</h1> {% endblock %}
+
+{% block content %}
+
+<ol>
+{% for item in search_history reversed %}
+  <li>
+    <a href="/search-{{ item.type }}/?name={{ item.value }}">
+      {{ item.type }}: {{ item.value }}
+    </a>
+  </li>
+{% empty %}
+  Search history is empty.
+{% endfor %}
+</ol>
+
+{% endblock %}
