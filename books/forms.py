@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from books.models import Book, Publisher, Author
 
 
-class AuthorForm(forms.Form):
+class AuthorSearchForm(forms.Form):
     author_name = forms.CharField(required=False)
 
 

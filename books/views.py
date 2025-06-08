@@ -1,14 +1,15 @@
 from django.contrib.auth import login, logout
-from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Value
 from django.db.models.functions import Concat
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
+from django.views.generic import View
 from books.models import Book, Author, Classification, Publisher
 
 from books.forms import (
-    AuthorForm,
+    AuthorSearchForm,
     BookPost,
     AuthorPost,
     PublisherPost,
@@ -66,48 +67,57 @@ def classification(request, pk):
     )
 
 
-@login_required(login_url="/login/")
-def search_author(request):
-    if "author_name" in request.GET:
-        form = AuthorForm(request.GET)
-        if form.is_valid():
-            author_name = form.cleaned_data["author_name"]
+class AuthorSearch(LoginRequiredMixin, View):
+    login_url = "/login/"
+    form_class = AuthorSearchForm
+    template_name = "search_author.html"
 
-            # concatenate first_name and last_name to filter both names at the
-            # same time
-            named_authors = Author.objects.annotate(
-                full_name=Concat("first_name", Value(" "), "last_name")
-            )
+    def get(self, request, *args, **kwargs):
+        if "author_name" in request.GET:
+            form = self.form_class(request.GET)
+            if form.is_valid():
+                author_name = form.cleaned_data["author_name"]
 
-            authors = named_authors.filter(full_name__icontains=author_name)
+                # concatenate first_name and last_name to filter both names at the
+                # same time
+                named_authors = Author.objects.annotate(
+                    full_name=Concat("first_name", Value(" "), "last_name")
+                )
 
-            return render(
-                request,
-                "search_author.html",
-                {"form": form, "authors": authors},
-            )
-    form = AuthorForm()
-    return render(request, "search_author.html", {"form": form})
+                authors = named_authors.filter(full_name__icontains=author_name)
+
+                return render(
+                    request,
+                    self.template_name,
+                    {"form": form, "authors": authors},
+                )
+
+        form = self.form_class()
+        return render(request, self.template_name, {"form": form})
 
 
-@login_required(login_url="/login/")
-def search_publisher(request):
-    if "publisher_name" in request.GET:
-        form = PublisherSearchForm(request.GET)
-        if form.is_valid():
-            publisher_name = form.cleaned_data["publisher_name"]
-            return render(
-                request,
-                "search_publisher.html",
-                {
-                    "form": form,
-                    "publishers": Publisher.objects.filter(
-                        name__icontains=publisher_name
-                    ),
-                },
-            )
-    form = PublisherSearchForm()
-    return render(request, "search_publisher.html", {"form": form})
+class PublisherSearch(LoginRequiredMixin, View):
+    login_url = "/login/"
+    form_class = PublisherSearchForm
+    template_name = "search_publisher.html"
+
+    def get(self, request, *args, **kwargs):
+        if "publisher_name" in request.GET:
+            form = self.form_class(request.GET)
+            if form.is_valid():
+                publisher_name = form.cleaned_data["publisher_name"]
+                return render(
+                    request,
+                    self.template_name,
+                    {
+                        "form": form,
+                        "publishers": Publisher.objects.filter(
+                            name__icontains=publisher_name
+                        ),
+                    },
+                )
+        form = self.form_class()
+        return render(request, self.template_name, {"form": form})
 
 
 @user_passes_test(lambda u: u.is_superuser, login_url="/login/")
