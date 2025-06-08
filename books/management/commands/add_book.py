@@ -46,4 +46,4 @@ class Command(BaseCommand):
             book_obj = Book.objects.create(title=book["title"])
             book_obj.authors.set(current_authors)
 
-            self.stdout.write(self.style.SUCCESS(f"Added book {book['title']}."))
+            self.stdout.write(self.style.SUCCESS(f"Added book '{book['title']}'."))
