@@ -10,6 +10,7 @@ from books.models import Book, Author, Classification, Publisher
 from books.forms import (
     AuthorForm,
     BookPost,
+    AuthorPost,
     PublisherPost,
     PublisherSearchForm,
     RegisterUser,
@@ -77,6 +78,7 @@ def search_author(request):
             named_authors = Author.objects.annotate(
                 full_name=Concat("first_name", Value(" "), "last_name")
             )
+
             authors = named_authors.filter(full_name__icontains=author_name)
 
             return render(
@@ -135,6 +137,19 @@ def post_publisher(request):
 
 
 @user_passes_test(lambda u: u.is_superuser, login_url="/login/")
+def post_author(request):
+    form = AuthorPost()
+
+    if request.method == "POST":
+        form = AuthorPost(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect("/search-author/")
+
+    return render(request, "post_entity.html", {"entity": "author", "form": form})
+
+
+@user_passes_test(lambda u: u.is_superuser, login_url="/login/")
 def delete_book(request, pk):
     book = get_object_or_404(Book, pk=pk)
 
@@ -155,6 +170,18 @@ def delete_publisher(request, pk):
         return HttpResponseRedirect("/search-publisher/")
 
     context = {"entity": "publisher", "obj": publisher}
+    return render(request, "delete_entity.html", context)
+
+
+@user_passes_test(lambda u: u.is_superuser, login_url="/login/")
+def delete_author(request, pk):
+    author = get_object_or_404(Author, pk=pk)
+
+    if request.method == "POST":
+        author.delete()
+        return HttpResponseRedirect("/search-author/")
+
+    context = {"entity": "author", "obj": author}
     return render(request, "delete_entity.html", context)
 
 
@@ -185,6 +212,21 @@ def put_publisher(request, pk):
             return HttpResponseRedirect("/search-publisher/")
 
     context = {"entity": "publisher", "obj": publisher, "form": form}
+    return render(request, "put_entity.html", context)
+
+
+@user_passes_test(lambda u: u.is_superuser, login_url="/login/")
+def put_author(request, pk):
+    author = get_object_or_404(Author, pk=pk)
+    form = AuthorPost(instance=author)
+
+    if request.method == "POST":
+        form = AuthorPost(request.POST, instance=author)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect("/search-author/")
+
+    context = {"entity": "author", "obj": author, "form": form}
     return render(request, "put_entity.html", context)
 
 
