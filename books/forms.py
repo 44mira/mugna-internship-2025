@@ -3,8 +3,6 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.utils.translation import gettext_lazy as _
 
-from books.models import Book, Publisher, Author
-
 
 class AuthorSearchForm(forms.Form):
     author_name = forms.CharField(required=False)
@@ -12,24 +10,6 @@ class AuthorSearchForm(forms.Form):
 
 class PublisherSearchForm(forms.Form):
     publisher_name = forms.CharField(required=False)
-
-
-class PublisherPost(forms.ModelForm):
-    class Meta:
-        model = Publisher
-        fields = "__all__"
-
-
-class AuthorPost(forms.ModelForm):
-    class Meta:
-        model = Author
-        fields = "__all__"
-
-
-class BookPost(forms.ModelForm):
-    class Meta:
-        model = Book
-        fields = "__all__"
 
 
 class RegisterUser(forms.ModelForm):

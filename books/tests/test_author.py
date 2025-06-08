@@ -5,7 +5,6 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 
 from books.models import Author
-from books.forms import AuthorSearchForm
 
 
 class AuthorTests(TestCase):

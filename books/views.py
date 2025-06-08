@@ -1,18 +1,15 @@
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Value
 from django.db.models.functions import Concat
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
-from django.views.generic import View
+from django.views.generic import CreateView, DeleteView, UpdateView, View
 from books.models import Book, Author, Classification, Publisher
 
 from books.forms import (
     AuthorSearchForm,
-    BookPost,
-    AuthorPost,
-    PublisherPost,
     PublisherSearchForm,
     RegisterUser,
     LoginUser,
@@ -120,124 +117,133 @@ class PublisherSearch(LoginRequiredMixin, View):
         return render(request, self.template_name, {"form": form})
 
 
-@user_passes_test(lambda u: u.is_superuser, login_url="/login/")
-def post_book(request):
-    form = BookPost()
+class BookPost(UserPassesTestMixin, CreateView):
+    login_url = "/login/"
 
-    if request.method == "POST":
-        form = BookPost(request.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect("/books/")
+    def test_func(self):
+        return self.request.user.is_superuser
 
-    return render(request, "post_entity.html", {"entity": "book", "form": form})
+    model = Book
+    fields = "__all__"
 
-
-@user_passes_test(lambda u: u.is_superuser, login_url="/login/")
-def post_publisher(request):
-    form = PublisherPost()
-
-    if request.method == "POST":
-        form = PublisherPost(request.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect("/search-publisher/")
-
-    return render(request, "post_entity.html", {"entity": "publisher", "form": form})
+    success_url = "/books/"
+    template_name = "post_entity.html"
+    extra_context = {"entity": "book"}
 
 
-@user_passes_test(lambda u: u.is_superuser, login_url="/login/")
-def post_author(request):
-    form = AuthorPost()
+class PublisherPost(UserPassesTestMixin, CreateView):
+    login_url = "/login/"
 
-    if request.method == "POST":
-        form = AuthorPost(request.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect("/search-author/")
+    def test_func(self):
+        return self.request.user.is_superuser
 
-    return render(request, "post_entity.html", {"entity": "author", "form": form})
+    model = Publisher
+    fields = "__all__"
 
-
-@user_passes_test(lambda u: u.is_superuser, login_url="/login/")
-def delete_book(request, pk):
-    book = get_object_or_404(Book, pk=pk)
-
-    if request.method == "POST":
-        book.delete()
-        return HttpResponseRedirect("/books/")
-
-    context = {"entity": "book", "obj": book}
-    return render(request, "delete_entity.html", context)
+    success_url = "/search-publisher/"
+    template_name = "post_entity.html"
+    extra_context = {"entity": "publisher"}
 
 
-@user_passes_test(lambda u: u.is_superuser, login_url="/login/")
-def delete_publisher(request, pk):
-    publisher = get_object_or_404(Publisher, pk=pk)
+class AuthorPost(UserPassesTestMixin, CreateView):
+    login_url = "/login/"
 
-    if request.method == "POST":
-        publisher.delete()
-        return HttpResponseRedirect("/search-publisher/")
+    def test_func(self):
+        return self.request.user.is_superuser
 
-    context = {"entity": "publisher", "obj": publisher}
-    return render(request, "delete_entity.html", context)
+    model = Author
+    fields = "__all__"
 
-
-@user_passes_test(lambda u: u.is_superuser, login_url="/login/")
-def delete_author(request, pk):
-    author = get_object_or_404(Author, pk=pk)
-
-    if request.method == "POST":
-        author.delete()
-        return HttpResponseRedirect("/search-author/")
-
-    context = {"entity": "author", "obj": author}
-    return render(request, "delete_entity.html", context)
+    success_url = "/search-author/"
+    template_name = "post_entity.html"
+    extra_context = {"entity": "author"}
 
 
-@user_passes_test(lambda u: u.is_superuser, login_url="/login/")
-def put_book(request, pk):
-    book = get_object_or_404(Book, pk=pk)
-    form = BookPost(instance=book)
+class BookDelete(UserPassesTestMixin, DeleteView):
+    login_url = "/login/"
 
-    if request.method == "POST":
-        form = BookPost(request.POST, instance=book)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(f"/book/{pk}")
+    def test_func(self):
+        return self.request.user.is_superuser
 
-    context = {"entity": "book", "obj": book, "form": form}
-    return render(request, "put_entity.html", context)
+    model = Book
+
+    success_url = "/books/"
+    template_name = "delete_entity.html"
+    extra_context = {"entity": "book"}
 
 
-@user_passes_test(lambda u: u.is_superuser, login_url="/login/")
-def put_publisher(request, pk):
-    publisher = get_object_or_404(Publisher, pk=pk)
-    form = PublisherPost(instance=publisher)
+class PublisherDelete(UserPassesTestMixin, DeleteView):
+    login_url = "/login/"
 
-    if request.method == "POST":
-        form = PublisherPost(request.POST, instance=publisher)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect("/search-publisher/")
+    def test_func(self):
+        return self.request.user.is_superuser
 
-    context = {"entity": "publisher", "obj": publisher, "form": form}
-    return render(request, "put_entity.html", context)
+    model = Publisher
+
+    success_url = "/search-publisher/"
+    template_name = "delete_entity.html"
+    extra_context = {"entity": "publisher"}
 
 
-@user_passes_test(lambda u: u.is_superuser, login_url="/login/")
-def put_author(request, pk):
-    author = get_object_or_404(Author, pk=pk)
-    form = AuthorPost(instance=author)
+class AuthorDelete(UserPassesTestMixin, DeleteView):
+    login_url = "/login/"
 
-    if request.method == "POST":
-        form = AuthorPost(request.POST, instance=author)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect("/search-author/")
+    def test_func(self):
+        return self.request.user.is_superuser
 
-    context = {"entity": "author", "obj": author, "form": form}
-    return render(request, "put_entity.html", context)
+    model = Author
+
+    success_url = "/search-author/"
+    template_name = "delete_entity.html"
+    extra_context = {"entity": "author"}
+
+
+class BookPut(UserPassesTestMixin, UpdateView):
+    login_url = "/login/"
+
+    def test_func(self):
+        return self.request.user.is_superuser
+
+    model = Book
+    fields = "__all__"
+
+    success_url = "/books/"
+    template_name = "put_entity.html"
+
+    def get_context_data(self, **kwargs):
+        return {"entity": "book", "obj": self.get_object()}
+
+
+class PublisherPut(UserPassesTestMixin, UpdateView):
+    login_url = "/login/"
+
+    def test_func(self):
+        return self.request.user.is_superuser
+
+    model = Publisher
+    fields = "__all__"
+
+    success_url = "/search-publisher/"
+    template_name = "put_entity.html"
+
+    def get_context_data(self, **kwargs):
+        return {"entity": "publisher", "obj": self.get_object()}
+
+
+class AuthorPut(UserPassesTestMixin, UpdateView):
+    login_url = "/login/"
+
+    def test_func(self):
+        return self.request.user.is_superuser
+
+    model = Author
+    fields = "__all__"
+
+    success_url = "/search-author/"
+    template_name = "put_entity.html"
+
+    def get_context_data(self, **kwargs):
+        return {"entity": "author", "obj": self.get_object()}
 
 
 def register_user(request):
